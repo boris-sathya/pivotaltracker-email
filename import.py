@@ -11,7 +11,6 @@ from email.header import decode_header
 #Fillup the REST params in a dic
 #Encode JSON, add API KEY header
 #Make request
-
 def postToPT(subj, content):
     dict_content = {'description':content,'name':subj}
     json_content = json.dumps(dict_content, encoding='iso-8859-1')
@@ -41,6 +40,9 @@ def checkMail():
         msg = email.message_from_string(data[0][1])
         sender = msg['from']
         subj, encoding = email.Header.decode_header(msg['subject'])[0]
+        #emails generated using request form from the website has two square braces in the subject
+        #one menitoning the region and the other mentioning the type of work
+        #this regexp acts as a filter to import only request emails to PT and skip other internal emails
         if len(re.findall(r'\[([^]]*)\]',subj)) != 2:
             continue
         for part in msg.walk():
